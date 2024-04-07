@@ -3,12 +3,24 @@
     <div
       style="display: flex; justify-content: space-between; margin: 15px 0"
     >
-      <el-radio-group v-model="dayType" size="small" @change="handleChangeType">
+      <el-radio-group v-model="queryParams.day_type" size="small" @change="handleChangeType">
         <el-radio-button label="day">日统计</el-radio-button>
         <el-radio-button label="month">月统计</el-radio-button>
         <el-radio-button label="year">年统计</el-radio-button>
 
       </el-radio-group>
+      <el-date-picker
+          v-model="time"
+          type="daterange"
+          range-separator="至"
+          style="margin-left: 15px"
+          size="small"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          value-format="yyyy-MM-dd "
+          @change="handleChangeTime"
+        >
+        </el-date-picker>
     </div>
     <line-chart :chartData="chartData"></line-chart>
   </div>
@@ -16,13 +28,10 @@
 
 <script>
 import LineChart from "./LineChart.vue";
-import { getCountData } from '../../../../api/statistics/statistics'
-import { getDicts } from '../../../../api/system/dict/data'
+import { getTotalData } from '../../../../api/statistics/statistics'
 export default {
   data() {
     return {
-      dayType:'day',
-      value1: [],
       chartData: {
         xAxis: {
           data: [],
@@ -89,44 +98,40 @@ export default {
           },
         ],
       },
-      queryParams:{
-        'vehicle_type':'',
-        startDate:'',
-        endDate:'',
-        type:'DAY',
-        time:' '
-      }
+      queryParams: {
+        startDate: '',
+        endDate: '',
+        day_type:'day'
+      },
+      time:[]
     }
   },
   created() {
     this.getData();
-    this.getDictList();
+    // this.getDictList();
   },
   methods:{
-    handleChangeTimeType(value){
-      if (value == 'SELF_TIME') {
-        return
-      }else {
-        this.queryParams.time=[]
-        this.getData()
-      }
 
-    },
     handleChangeTime(value){
       this.queryParams.startDate = value[0]
       this.queryParams.endDate = value[1]
+      this.queryParams.day_type=' '
       this.getData();
     },
     handleChangeType(value){
+      this.queryParams.startDate=''
+      this.queryParams.endDate=''
       this.getData();
     },
+
     getData(){
-      getCountData(this.queryParams).then(res=>{
+      getTotalData(this.queryParams).then(res=>{
         if(res.code == '200') {
           this.chartData.xAxis.data=res.data.xdata
           this.chartData.series[0].data=res.data.ydata1
           this.chartData.series[1].data=res.data.ydata2
         }
+        console.log(res);
       })
     },
     

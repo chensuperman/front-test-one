@@ -12,3 +12,12 @@ export function getCountData(query) {
   })
 }
 
+//统计总量
+export function getTotalData(query) {
+  return request({
+    url: '/biz/vehicle/all/count',
+    method: 'get',
+    // method: 'get',
+    params: query
+  })
+}

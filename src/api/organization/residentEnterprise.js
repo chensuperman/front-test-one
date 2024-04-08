@@ -52,3 +52,12 @@ export function getCompanyCode(data) {
     data: data
   })
 }
+
+//查询承运企业列表
+export function listCarrierCompany(query) {
+  return request({
+    url: '/biz/transportCompany/list',
+    method: 'get',
+    params: query
+  })
+}
